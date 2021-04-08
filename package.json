@@ -1,0 +1,20 @@
+{
+  "name": "percyelectron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Mudassar",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "sitemap-stream-parser": "^1.7.0"
+  },
+  "devDependencies": {
+    "@percy/script": "^1.1.0",
+    "electron": "^12.0.1"
+  }
+}

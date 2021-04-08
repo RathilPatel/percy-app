@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Percy Runner!</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+<body>
+    <center>
+    <h1>Percy Runner!</h1>
+    <p>
+        You can now run percy without writing a single 
+    </p>
+    <p>
+        <form>
+        Enter your URL here:
+        <input type="text" id="url" name="url" size=110>
+        <br><br>
+        <fieldset>
+            <legend>Configurations:</legend>
+        Percy Token: <input type="text" id="token" name="token" size=40>
+        <br><br>
+        Paste your yml file  here:
+        <br>
+        <textarea id="yml" name="yml" rows="25" cols="80">
+          version: 1
+          snapshot:
+            widths: [375, 1280]
+            min-height: 1024 # px
+            percy-css: |
+              iframe {
+                display: none;
+              }
+          static-snapshots:
+            path: _site/
+            base-url: /blog/
+            snapshot-files: '**/*.html'
+            ignore-files: '**/*.htm'
+          agent:
+            asset-discovery:
+              allowed-hostnames:
+                - cdn.example.com
+              request-headers:
+                Authorization: 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+              network-idle-timeout: 150 # ms
+              cache-responses: true  # default
+              page-pool-size-min: 5 # pages
+              page-pool-size-max: 20 # pages
+            </textarea>
+
+        </fieldset>
+            <br>
+            <button type="button" id="CaptureScreenshot" onclick="alert('Running on percy!')">Run!</button>
+
+        </form>
+        <br>
+        <fieldset>
+          <legend>Console Log:</legend>
+
+      <br>
+      <!-- <label for="Console Logs"> </label> -->
+        <!-- <textarea name="" id="Console Logs" cols="80" rows="10" ></textarea> -->
+        <div id="console_div" style="width:100%;height:150px;overflow-x:auto;background-color:hsl(0, 0%, 95%)">
+          <p name="" id="console_output"> </p>
+        </div>
+
+      </fieldset>
+        
+    </p>
+</center>
+
+<script type="module" src="js/script.js"></script>
+</body>
+</html>
