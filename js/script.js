@@ -1,4 +1,9 @@
-
+console.log("First Console");
+const PercyScript = require('@percy/script');
+const dotenv = require('dotenv');
+console.log("NOt reaching second Console");
+const fs = require('fs');
+var sitemaps = require('sitemap-stream-parser');
 const { spawn } = require('child_process')
 const urls = []; //store all discovered urls
 dotenv.config();
