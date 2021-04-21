@@ -10,6 +10,7 @@ let urls = []; //store all discovered urls
 let env_var = [];
 var logs
 dotenv.config();
+const path = require('path');
 
 var generateScreenshot = document.getElementById('CaptureScreenshot');
 
@@ -21,6 +22,22 @@ generateScreenshot.addEventListener('click', (event) => {
     var website_url = document.getElementById('url').value; //capture webpage url here
     var percy_token = document.getElementById('token').value;
     var percy_branch = document.getElementById('percy_branch').value;
+    var percyYaml = document.getElementById('yml').value;
+
+    //Creating YAML file for Global SDK settings
+    try {
+        if (percyYaml != "") {
+            fs.writeFileSync('.percy.yml', percyYaml, 'utf-8'); 
+            console.log("Found Yaml settings!");
+        } else {
+            fs.writeFileSync('.percy.yml',"", 'utf-8'); 
+            console.log("No Yaml File found!")
+        }
+    }
+    catch(e) {
+         alert('Failed to save the file !');
+         console.log("Error YAML saving: "+e); 
+    }
 
     env_var.push(percy_token);
     env_var.push(percy_branch);
