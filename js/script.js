@@ -7,28 +7,26 @@ const fs = require('fs');
 var sitemaps = require('sitemap-stream-parser');
 const { spawn } = require('child_process')
 let urls = []; //store all discovered urls
-var percy_start,percy_stop,logs , pid
-var data
+let env_var = [];
+var logs
 dotenv.config();
-
 
 var generateScreenshot = document.getElementById('CaptureScreenshot');
 
 generateScreenshot.addEventListener('click', (event) => {
 
-    var website_url = document.getElementById('url'); //capture webpage url here
-    website_url = "https://yoast.com/yoast_series-sitemap.xml"  
+    cleanup()
 
-    var percy_token = document.getElementById('token');
-    // branch = document.getElementById('CaptureScreenshot');
-    // process.env.URL=website_url;
-    process.env.PERCY_TOKEN = '9057676433c5bef5b03a7af7021e59edda91573a344ac0e63eeb87099d5ee81d'
-    // process.env.PERCY_TOKEN = percy_token
-    process.env.PERCY_BRANCH = 'main'
+    // Get Input Values
+    var website_url = document.getElementById('url').value; //capture webpage url here
+    var percy_token = document.getElementById('token').value;
+    var percy_branch = document.getElementById('percy_branch').value;
 
+    env_var.push(percy_token);
+    env_var.push(percy_branch);
 
-    console.log("Percy TOKEN:  "+process.env.PERCY_TOKEN)
-    ipcRenderer.sendSync('start-percy', '9057676433c5bef5b03a7af7021e59edda91573a344ac0e63eeb87099d5ee81d')    
+    // Starting Percy CLI with renderer
+    ipcRenderer.sendSync('start-percy', env_var)    
     try {
         getSitemaps(website_url)  
     } catch (error) {
@@ -41,51 +39,39 @@ generateScreenshot.addEventListener('click', (event) => {
 
 async function getSitemaps(url){
     urls = [];
-    console.log("Entered getSitemaps function "+url);
-    // 'http://dev.accounts.com/sitemap.xml'
+    logs = document.getElementById('console_output').innerHTML + "<br>Fetching Sitemaps URLs:";
+    document.getElementById('console_output').innerHTML = logs;
     await sitemaps.parseSitemapsPromise(url, url=>{
-       urls.push(url);
-    //    logs = document.getElementById('console_output').innerHTML;
-    //    document.getElementById('console_output').innerHTML = logs+"<br>"+data;
-    //    updateScroll();
-       console.log('adding ', url)
+            urls.push(url);
+            logs = document.getElementById('console_output').innerHTML;
+            document.getElementById('console_output').innerHTML = logs+"<br>"+url;
+            updateScroll();
+            console.log('adding ', url)
        }, function(err, sitemaps) {
-       console.log('total urls', urls.length)
-       console.error("Error here: "+err);
+            console.log('total urls', urls.length)
+            console.error("Error here: "+err);
        });
- 
-     console.log('this is called last');
-     snapshot(); 
- 
- 
- }
-
- function snapshot(){
-     console.log("printing here!");
-        console.log('Entered snapshot function');
-        console.log(ipcRenderer.sendSync('snapshot', urls)) // prints "pong"
-            
-     
-            // console.log(ipcRenderer.sendSync('stop-percy', pid)) // prints "pong"
-        //  percy_stop = spawn("kill",[percy_start.pid])
-        //  console.log("Process Id for KILL: "+percy_stop.pid);
-    //  });
+    snapshot(); 
     
- }
+}
 
+function snapshot(){
+    console.log(ipcRenderer.sendSync('snapshot', urls))  // Sending URLs for Snapshot
+}
 
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+    console.log(arg)
+    logs = document.getElementById('console_output').innerHTML;
+    document.getElementById('console_output').innerHTML = logs+"<br>"+arg;
+    updateScroll();
+})
 
-
-
+function cleanup() {
+    document.getElementById('console_output').innerHTML = " ";
+    env_var = []
+}
 
  function updateScroll(){
     var element = document.getElementById("console_output");
     element.scrollTop = element.scrollHeight;
 }
-
-
-ipcRenderer.on('ping', function(event, message) {
-      console.log(message);  // Prints "whoooooooh!"
-    });
-
-// document.getElementById("yml").innerHTML= "";
